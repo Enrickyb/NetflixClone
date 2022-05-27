@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import FeaturedMovie from './components/FeaturedMovie/FeaturedMovie';
+import Header from './components/Header/Header';
 import MovieRow from './components/MovieRow/MovieRow';
 import tmdb from './Tmdb'
 
@@ -8,6 +9,9 @@ function App() {
 
   const [movieList, setMovieList]= useState([])
   const [featuredData, setFeaturedData]= useState(null)
+  const [blackHeader, setBlackHeader]= useState(false)
+
+
   useEffect(()=>{
     const loadAll = async () =>{
      
@@ -25,10 +29,26 @@ function App() {
 
     loadAll()
   },[])
+  useEffect(()=>{
+    const scrollListener = () =>{
+      if(window.scrollY > 10) {
+        setBlackHeader(true)
+      }else{
+        setBlackHeader(false)
+      }
+    }
+    window.addEventListener('scroll', scrollListener)
+    return ()=>{
+      window.removeEventListener('scroll', scrollListener)
+    }
+  },[])
 
 
   return (
+    
     <div className='page'>
+      
+      <Header black={blackHeader}></Header>
       {
       featuredData && <FeaturedMovie item={featuredData}/>
       }
@@ -39,6 +59,17 @@ function App() {
               ))}
       </section>
       
+      <footer> 
+        Made by Enrickyb <br/>
+         Data base by Themoviedb.org 
+       </footer>
+       {movieList.length <= 0 &&
+       <div className='loading'>
+       <img src='https://media.filmelier.com/noticias/br/2020/03/Netflix_LoadTime.gif' alt='loading'></img>
+     </div>
+     }
+       
+       
     </div>
   );
 } 
